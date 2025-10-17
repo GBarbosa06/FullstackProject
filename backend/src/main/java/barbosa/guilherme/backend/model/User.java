@@ -12,7 +12,7 @@ public class User {
     private Long id;
 
     @NotBlank
-    private String nome;
+    private String name;
 
     @Email
     @NotBlank
@@ -20,7 +20,7 @@ public class User {
     private String email;
 
     @NotBlank
-    private String senha;
+    private String password;
 
     public Long getId() {
         return id;
@@ -30,12 +30,12 @@ public class User {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -46,11 +46,11 @@ public class User {
         this.email = email;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

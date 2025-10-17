@@ -13,18 +13,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private UserService service;
+    private final UserService service;
 
-    @Autowired
-    private UserRepository repository;
+    public UserController(UserService service) {
+        this.service = service;
+    }
+
 
     @PostMapping
     public ResponseEntity<User> save(@RequestBody @Valid UserPostRequestBody userPostRequestBody){
         return new ResponseEntity<>(service.save(userPostRequestBody), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody @Valid UserPostRequestBody userPostRequestBody) throws BadRequestException {
+        return new ResponseEntity<>(service.register(userPostRequestBody), HttpStatus.valueOf(201));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody @Valid UserPostRequestBody userPostRequestBody) throws BadRequestException {
+        return new ResponseEntity<>(service.login(userPostRequestBody), HttpStatus.valueOf(200));
     }
 
     @GetMapping
