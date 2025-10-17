@@ -1,0 +1,14 @@
+package barbosa.guilherme.backend.requests;
+
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
+import org.hibernate.validator.constraints.URL;
+
+@Data
+public class UserPostRequestBody {
+    @NotEmpty(message = "The name field cannot be empty")
+    private String name;
+
+    @URL(message = "The url is not valid")
+    private String url;
+}
