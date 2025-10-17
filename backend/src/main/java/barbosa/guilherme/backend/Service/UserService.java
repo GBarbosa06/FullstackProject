@@ -1,12 +1,12 @@
 package barbosa.guilherme.backend.Service;
 
+import barbosa.guilherme.backend.exception.BadRequestException;
 import barbosa.guilherme.backend.mapper.UserMapper;
 import barbosa.guilherme.backend.model.User;
 import barbosa.guilherme.backend.repository.UserRepository;
 import barbosa.guilherme.backend.requests.UserPostRequestBody;
 import barbosa.guilherme.backend.requests.UserPutRequestBody;
 import jakarta.transaction.Transactional;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
