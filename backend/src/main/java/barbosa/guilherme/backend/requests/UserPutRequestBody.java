@@ -6,4 +6,6 @@ import lombok.Data;
 public class UserPutRequestBody {
     private long id;
     private String name;
+    private String email;
+    private String password;
 }
