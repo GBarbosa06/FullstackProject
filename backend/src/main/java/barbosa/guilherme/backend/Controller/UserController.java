@@ -2,6 +2,7 @@ package barbosa.guilherme.backend.Controller;
 
 import barbosa.guilherme.backend.Service.UserService;
 import barbosa.guilherme.backend.model.User;
+import barbosa.guilherme.backend.requests.UserLoginRequestBody;
 import barbosa.guilherme.backend.requests.UserPostRequestBody;
 import barbosa.guilherme.backend.requests.UserPutRequestBody;
 import jakarta.validation.Valid;
@@ -32,8 +33,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody @Valid UserPostRequestBody userPostRequestBody) {
-        return new ResponseEntity<>(service.login(userPostRequestBody), HttpStatus.valueOf(200));
+    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequestBody userLoginRequestBody) {
+        return new ResponseEntity<>(service.login(userLoginRequestBody), HttpStatus.valueOf(200));
     }
 
     @GetMapping
@@ -41,12 +42,12 @@ public class UserController {
         return ResponseEntity.ok(service.listAll());
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/find/{id}")
     public ResponseEntity<User> findById(@PathVariable long id) {
         return ResponseEntity.ok(service.findByIdOrThrowBadRequestException(id));
     }
 
-    @DeleteMapping(path = "/{id}")
+    @DeleteMapping(path = "/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -4,6 +4,7 @@ import barbosa.guilherme.backend.exception.BadRequestException;
 import barbosa.guilherme.backend.mapper.UserMapper;
 import barbosa.guilherme.backend.model.User;
 import barbosa.guilherme.backend.repository.UserRepository;
+import barbosa.guilherme.backend.requests.UserLoginRequestBody;
 import barbosa.guilherme.backend.requests.UserPostRequestBody;
 import barbosa.guilherme.backend.requests.UserPutRequestBody;
 import jakarta.transaction.Transactional;
@@ -64,11 +65,11 @@ public class UserService {
 
         }
 
-        return repository.save(user);
+        return save(userPostRequestBody);
     }
 
-    public User login(UserPostRequestBody userPostRequestBody) throws BadRequestException {
-        User user = UserMapper.INSTANCE.toUser(userPostRequestBody);
+    public User login(UserLoginRequestBody userLoginRequestBody) throws BadRequestException {
+        User user = UserMapper.INSTANCE.toUser(userLoginRequestBody);
         Optional<User> searchedUser = repository.findByEmail(user.getEmail());
 
         if (searchedUser.isEmpty()) {
