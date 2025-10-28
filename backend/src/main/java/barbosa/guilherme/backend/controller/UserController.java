@@ -1,4 +1,4 @@
-package barbosa.guilherme.backend.Controller;
+package barbosa.guilherme.backend.controller;
 
 import barbosa.guilherme.backend.Service.UserService;
 import barbosa.guilherme.backend.model.User;
