@@ -2,7 +2,6 @@ package barbosa.guilherme.backend.requests;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
-import org.hibernate.validator.constraints.URL;
 
 @Data
 public class UserLoginRequestBody {

@@ -19,14 +19,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O nome não pode estar vazio")
+    @NotBlank
     private String name;
 
     @Email
-    @NotBlank(message = "O email não pode estar vazio")
+    @NotBlank
     @Column(unique = true)
     private String email;
 
-    @NotBlank(message = "A senha não pode estar vazio")
+    @NotBlank
     private String password;
 }

@@ -19,6 +19,6 @@ public class UserPostRequestBody {
     @Size(min = 6, message = "Password must have at least 6 characters")
     private String password;
 
-    @URL(message = "The url is not valid")
+    @URL(message = "Url is not valid", regexp = ".*", flags = {})
     private String url;
 }

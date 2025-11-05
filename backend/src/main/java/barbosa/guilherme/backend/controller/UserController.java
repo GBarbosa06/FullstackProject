@@ -1,4 +1,4 @@
-package barbosa.guilherme.backend.controller;
+package barbosa.guilherme.backend.Controller;
 
 import barbosa.guilherme.backend.Service.UserService;
 import barbosa.guilherme.backend.model.User;
@@ -22,19 +22,15 @@ public class UserController {
     }
 
 
-    @PostMapping
-    public ResponseEntity<User> save(@RequestBody @Valid UserPostRequestBody userPostRequestBody){
-        return new ResponseEntity<>(service.save(userPostRequestBody), HttpStatus.CREATED);
-    }
-
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody @Valid UserPostRequestBody userPostRequestBody) {
-        return new ResponseEntity<>(service.register(userPostRequestBody), HttpStatus.valueOf(201));
+    public ResponseEntity<User> register(@Valid @RequestBody UserPostRequestBody userPostRequestBody) {
+        return new ResponseEntity<>(service.register(userPostRequestBody), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequestBody userLoginRequestBody) {
-        return new ResponseEntity<>(service.login(userLoginRequestBody), HttpStatus.valueOf(200));
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequestBody userLoginRequestBody) {
+        String token = service.login(userLoginRequestBody);
+        return ResponseEntity.ok(token);
     }
 
     @GetMapping
@@ -54,7 +50,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody UserPutRequestBody userPutRequestBody) {
+    public ResponseEntity<Void> update(@RequestBody @Valid UserPutRequestBody userPutRequestBody) {
         service.update(userPutRequestBody);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
