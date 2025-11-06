@@ -5,6 +5,7 @@ import { Eye, EyeOff } from 'lucide-react';
 //components
 import Input from '../components/Input'
 import Label from '../components/Label';
+import useAuthentication from '../hooks/useAuthentication';
 
 const Register = () => {
     const [name, setName] = useState('');
@@ -14,32 +15,25 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [mensagem, setMensagem] = useState('');
+    const [error, setError] = useState(null);
+
+    const {register, loading, error:authError} = useAuthentication();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
 
-  try {
-    const response = await fetch("http://localhost:8080/users/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
+        const user = {
+            name,
+            email,
+            password,
+        }
+        if(password !== confirmPassword){
+            setMensagem('As senhas não coincidem.');
+            return;
+        }
 
-    if (response.ok) {
-      const data = await response.json();
-      setMensagem(`Usuário ${data.nome} cadastrado com sucesso!`);
-      setName("");
-      setEmail("");
-      setPassword("");
-    } else {
-      setMensagem("Erro ao cadastrar usuário.");
-    }
-  } catch (error) {
-    console.error("Erro:", error);
-    setMensagem("Falha na comunicação com o servidor.");
-  }
+        const res = await register(user);
   }
 
   return (
