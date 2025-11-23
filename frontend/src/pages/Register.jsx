@@ -31,8 +31,18 @@ const Register = () => {
         if(password !== confirmPassword){
             setMensagem('As senhas não coincidem.');
             return;
+        } else if(password.length < 8){
+            setMensagem('A senha deve ter pelo menos 8 caracteres.');
+            return;
+        } else if(!/\d/.test(password)){
+            setMensagem('A senha deve conter pelo menos um número.');
+            return;
+        } else if (!/[A-Z]/.test(password)) {
+            setMensagem('A senha deve conter pelo menos uma letra maiúscula.');
+            return;
         }
-
+        // email verification on useAuthentication hook
+        
         const res = await register(user);
   }
 
@@ -93,6 +103,7 @@ const Register = () => {
       </Label>
         <button className='btn'>Registrar</button>
         {mensagem && <p className='text-[#ccc]'>{mensagem}</p>}
+        {authError && <p className='text-[#ccc]'>{authError}</p>}
       <p className='text-sm text-[#696969]'>Já tem uma conta? <Link to="/login" className='text-[#ccc] font-bold'>Faça login</Link></p>
     </form>
     </div>

@@ -30,7 +30,8 @@ const useAuthentication = () => {
             })
             
             if (!response.ok) {
-                throw new Error('Erro ao cadastrar usuário.');
+                throw new Error('Email já cadastrado ou inválido.');
+                
             } 
             
             const result = await response.json();
