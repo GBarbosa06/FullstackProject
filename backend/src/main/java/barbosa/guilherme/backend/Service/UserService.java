@@ -6,6 +6,7 @@ import barbosa.guilherme.backend.repository.UserRepository;
 import barbosa.guilherme.backend.requests.UserLoginRequestBody;
 import barbosa.guilherme.backend.requests.UserPostRequestBody;
 import barbosa.guilherme.backend.requests.UserPutRequestBody;
+import barbosa.guilherme.backend.responses.TokenResponse;
 import barbosa.guilherme.backend.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
@@ -75,7 +76,7 @@ public class UserService {
         repository.save(savedUser);
     }
 
-    public User register(UserPostRequestBody userPostRequestBody) throws BadRequestException {
+    public TokenResponse register(UserPostRequestBody userPostRequestBody) throws BadRequestException {
         User user = new User();
         user.setName(userPostRequestBody.getName());
         user.setEmail(userPostRequestBody.getEmail());
@@ -96,16 +97,28 @@ public class UserService {
 
         Pattern passwordPattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
         if (!passwordPattern.matcher(user.getPassword()).matches()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit"
+            );
         }
 
+        // encode
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return repository.save(user);
+
+        // save
+        repository.save(user);
+
+        // generate token
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        // return user + token
+        return new TokenResponse(token);
     }
 
 
-    public String login(UserLoginRequestBody userLoginRequestBody) throws BadRequestException {
+
+    public TokenResponse login(UserLoginRequestBody userLoginRequestBody) throws BadRequestException {
         Optional<User> searchedUser = repository.findByEmail(userLoginRequestBody.getEmail());
 
         if (searchedUser.isEmpty() ||
@@ -113,6 +126,11 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
-        return jwtUtil.generateToken(searchedUser.get().getEmail());
+        User user = searchedUser.get();
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        return new TokenResponse(token);
+
     }
+
 }

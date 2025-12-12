@@ -36,6 +36,7 @@ const useAuthentication = () => {
             
             const result = await response.json();
             console.log('Usuário cadastrado com sucesso:', result);
+            console.log('Token: ', result.token);
             return result;
         }catch (error) {
             console.log(error.message);

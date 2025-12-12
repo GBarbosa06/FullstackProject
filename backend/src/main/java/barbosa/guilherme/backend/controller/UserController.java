@@ -5,6 +5,7 @@ import barbosa.guilherme.backend.model.User;
 import barbosa.guilherme.backend.requests.UserLoginRequestBody;
 import barbosa.guilherme.backend.requests.UserPostRequestBody;
 import barbosa.guilherme.backend.requests.UserPutRequestBody;
+import barbosa.guilherme.backend.responses.TokenResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +23,19 @@ public class UserController {
         this.service = service;
     }
 
-
     @PostMapping("/register")
-    public ResponseEntity<User> register(@Valid @RequestBody UserPostRequestBody userPostRequestBody) {
-        return new ResponseEntity<>(service.register(userPostRequestBody), HttpStatus.CREATED);
+    public ResponseEntity<TokenResponse> register(@RequestBody UserPostRequestBody request) {
+        return ResponseEntity.ok(service.register(request));
     }
+
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequestBody userLoginRequestBody) {
-        String token = service.login(userLoginRequestBody);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<TokenResponse> login(@RequestBody UserLoginRequestBody request) {
+        return ResponseEntity.ok(service.login(request));
     }
+
+
+
 
     @GetMapping
     public ResponseEntity<List<User>> listAll(){
