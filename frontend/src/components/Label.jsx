@@ -1,8 +1,9 @@
+
 import React from 'react'
 
-const Label = ({children}) => {
+const Label = ({ children, className = '', ...props }) => {
   return (
-    <label className='flex flex-col md:w-[50%] lg:w-[30%] w-[70%]'>
+    <label className={`form-label-wrapper ${className}`} {...props}>
         {children}
     </label>
   )
