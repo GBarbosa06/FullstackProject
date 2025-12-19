@@ -36,4 +36,7 @@ public class ProductService {
         return repository.save(newProduct);
     }
 
+    public void delete(long id) {
+        repository.delete(findByIdOrThrowBadRequestException(id));
+    }
 }
