@@ -34,7 +34,7 @@ public class UserService {
         return repository.findAll();
     }
 
-    public User findByIdOrThrowBadRequestException(long id) throws BadRequestException {
+    public User findByIdOrThrowBadRequestException(long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("User not found"));
     }
@@ -54,11 +54,11 @@ public class UserService {
         return repository.save(user);
     }
 
-    public void delete(long id) throws BadRequestException {
+    public void delete(long id) {
         repository.delete(findByIdOrThrowBadRequestException(id));
     }
 
-    public void update(UserPutRequestBody userPutRequestBody) throws BadRequestException {
+    public void update(UserPutRequestBody userPutRequestBody) {
         User savedUser = findByIdOrThrowBadRequestException(userPutRequestBody.getId());
 
         if (userPutRequestBody.getName() != null && !userPutRequestBody.getName().isBlank()) {
@@ -76,7 +76,7 @@ public class UserService {
         repository.save(savedUser);
     }
 
-    public TokenResponse register(UserPostRequestBody userPostRequestBody) throws BadRequestException {
+    public TokenResponse register(UserPostRequestBody userPostRequestBody) {
         User user = new User();
         user.setName(userPostRequestBody.getName());
         user.setEmail(userPostRequestBody.getEmail());
@@ -118,7 +118,7 @@ public class UserService {
 
 
 
-    public TokenResponse login(UserLoginRequestBody userLoginRequestBody) throws BadRequestException {
+    public TokenResponse login(UserLoginRequestBody userLoginRequestBody) {
         Optional<User> searchedUser = repository.findByEmail(userLoginRequestBody.getEmail());
 
         if (searchedUser.isEmpty() ||
