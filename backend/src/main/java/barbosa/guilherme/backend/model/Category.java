@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "categories")
 @NoArgsConstructor
@@ -23,9 +24,6 @@ public class Category {
     @Column(nullable = false, unique = true, length = 120)
     private String slug;
 
-    @Column(nullable = false)
-    private Boolean active;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -34,7 +32,6 @@ public class Category {
 
     @PrePersist
     public void prePersist() {
-        this.active = this.active != null ? this.active : true;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
