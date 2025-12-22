@@ -4,11 +4,11 @@ import barbosa.guilherme.backend.exception.BadRequestException;
 import barbosa.guilherme.backend.model.Product;
 import barbosa.guilherme.backend.repository.ProductRepository;
 import barbosa.guilherme.backend.requests.ProductPostRequestBody;
+import barbosa.guilherme.backend.requests.ProductPutRequestBody;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -38,5 +38,21 @@ public class ProductService {
 
     public void delete(long id) {
         repository.delete(findByIdOrThrowBadRequestException(id));
+    }
+
+    public void update(ProductPutRequestBody productPutRequestBody){
+        Product savedProduct = findByIdOrThrowBadRequestException(productPutRequestBody.getId());
+
+        if (productPutRequestBody.getName() != null && !productPutRequestBody.getName().isBlank()) {
+            savedProduct.setName(productPutRequestBody.getName());
+        }
+        if (productPutRequestBody.getDescription() != null && !productPutRequestBody.getDescription().isBlank()) {
+            savedProduct.setDescription(productPutRequestBody.getDescription());
+        }
+        if(productPutRequestBody.getPrice() >= 0){
+            savedProduct.setPrice(productPutRequestBody.getPrice());
+        }
+
+        repository.save(savedProduct);
     }
 }
