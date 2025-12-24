@@ -24,12 +24,12 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TokenResponse> register(@RequestBody UserPostRequestBody request) {
+    public ResponseEntity<TokenResponse> register(@RequestBody @Valid UserPostRequestBody request) {
         return ResponseEntity.ok(service.register(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody UserLoginRequestBody request) {
+    public ResponseEntity<TokenResponse> login(@RequestBody @Valid UserLoginRequestBody request) {
         return ResponseEntity.ok(service.login(request));
     }
 
