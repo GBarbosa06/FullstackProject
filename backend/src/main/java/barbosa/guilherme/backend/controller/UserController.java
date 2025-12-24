@@ -28,14 +28,10 @@ public class UserController {
         return ResponseEntity.ok(service.register(request));
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody UserLoginRequestBody request) {
         return ResponseEntity.ok(service.login(request));
     }
-
-
-
 
     @GetMapping
     public ResponseEntity<List<User>> listAll(){
