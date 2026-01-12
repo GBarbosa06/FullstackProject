@@ -1,6 +1,6 @@
 # FullstackProject
 
-Sistema fullstack para gerenciamento de estoque, permitindo controle de produtos, categorias e movimentações, com autenticação segura via JWT.
+Sistema fullstack em construção para gerenciamento de estoque, permitindo controle de produtos, categorias e movimentações, com autenticação segura via JWT.
 
 ### Backend
 - **Java**
@@ -15,7 +15,7 @@ Sistema fullstack para gerenciamento de estoque, permitindo controle de produtos
 ### Frontend
 - **React.js**
 - **JavaScript**
-- **Tailwind Css**
+- **Tailwind CSS**
 
 ### Arquitetura
 
