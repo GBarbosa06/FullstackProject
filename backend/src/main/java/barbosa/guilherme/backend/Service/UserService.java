@@ -44,16 +44,6 @@ public class UserService {
     }
 
 
-    @Transactional
-    public User save(UserPostRequestBody userPostRequestBody){
-        User user = new User();
-        user.setName(userPostRequestBody.getName());
-        user.setEmail(userPostRequestBody.getEmail());
-        user.setPassword(userPostRequestBody.getPassword());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return repository.save(user);
-    }
-
     public void delete(long id) {
         repository.delete(findByIdOrThrowBadRequestException(id));
     }
@@ -76,6 +66,7 @@ public class UserService {
         repository.save(savedUser);
     }
 
+    @Transactional
     public TokenResponse register(UserPostRequestBody userPostRequestBody) {
         User user = new User();
         user.setName(userPostRequestBody.getName());
@@ -112,8 +103,12 @@ public class UserService {
         // generate token
         String token = jwtUtil.generateToken(user.getEmail());
 
+        UserLoginRequestBody loginBody = new UserLoginRequestBody();
+        loginBody.setEmail(userPostRequestBody.getEmail());
+        loginBody.setPassword(userPostRequestBody.getPassword());
+
         // return token
-        return new TokenResponse(token);
+        return login(loginBody);
     }
 
 
