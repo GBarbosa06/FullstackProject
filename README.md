@@ -37,11 +37,11 @@ A segurança é feita utilizando **JWT**:
 - Rotas protegidas exigem token válido
 
 
-## Como Rodar o projeto 
-# Subir o banco
+# Como Rodar o projeto 
+## Subir o banco
 docker-compose up -d
 
-# Rodar o backend
+## Rodar o backend
 ```bash
 ./mvnw spring-boot:run
 ```
@@ -49,7 +49,7 @@ docker-compose up -d
 
 **A API ficará disponível em http://localhost:8080**
 
-# Rodar o frontend
+## Rodar o frontend
 ```bash
 npm install
 npm run dev
