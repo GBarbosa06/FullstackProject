@@ -11,7 +11,6 @@ public class CategoryPostRequestBody {
     @Size(min = 2, max = 100, message = "Name length must be between 2 and 100")
     private String name;
 
-    @NotBlank
     @Size(min = 2, max = 100, message = "Slug length must be between 2 and 100")
     private String slug;
 }

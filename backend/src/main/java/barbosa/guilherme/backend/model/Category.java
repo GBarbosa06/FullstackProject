@@ -6,7 +6,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "categories")
 @NoArgsConstructor
@@ -24,7 +25,7 @@ public class Category {
     @Column(nullable = false, unique = true, length = 120)
     private String slug;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)

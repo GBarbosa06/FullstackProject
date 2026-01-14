@@ -1,6 +1,6 @@
 package barbosa.guilherme.backend.controller;
 
-import barbosa.guilherme.backend.Service.StockService;
+import barbosa.guilherme.backend.service.StockService;
 import barbosa.guilherme.backend.model.Stock;
 import barbosa.guilherme.backend.requests.StockPostRequestBody;
 import barbosa.guilherme.backend.requests.StockPutRequestBody;

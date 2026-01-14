@@ -1,6 +1,6 @@
 package barbosa.guilherme.backend.controller;
 
-import barbosa.guilherme.backend.Service.ProductService;
+import barbosa.guilherme.backend.service.ProductService;
 import barbosa.guilherme.backend.model.Product;
 import barbosa.guilherme.backend.requests.ProductPostRequestBody;
 import barbosa.guilherme.backend.requests.ProductPutRequestBody;

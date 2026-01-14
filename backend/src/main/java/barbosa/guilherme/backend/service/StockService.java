@@ -1,4 +1,4 @@
-package barbosa.guilherme.backend.Service;
+package barbosa.guilherme.backend.service;
 
 import barbosa.guilherme.backend.exception.BadRequestException;
 import barbosa.guilherme.backend.model.Stock;

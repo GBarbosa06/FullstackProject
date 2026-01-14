@@ -1,4 +1,4 @@
-package barbosa.guilherme.backend.Service;
+package barbosa.guilherme.backend.service;
 
 import barbosa.guilherme.backend.exception.BadRequestException;
 import barbosa.guilherme.backend.model.Category;
@@ -27,8 +27,12 @@ public class CategoryService {
     public Category save(CategoryPostRequestBody categoryPostRequestBody){
         Category newCategory = new  Category();
         newCategory.setName(categoryPostRequestBody.getName());
-        newCategory.setSlug(categoryPostRequestBody.getSlug());
-        return newCategory;
+        if(categoryPostRequestBody.getSlug() != null){
+            newCategory.setSlug(categoryPostRequestBody.getSlug());
+        } else {
+            newCategory.setSlug(newCategory.getName().toLowerCase().replaceAll(" ", "-"));
+        }
+        return repository.save(newCategory);
     }
 
     public void delete(long id){repository.delete(findByIdOrThrowBadRequestException(id));}

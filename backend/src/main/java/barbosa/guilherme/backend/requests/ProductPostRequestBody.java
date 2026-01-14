@@ -1,9 +1,11 @@
 package barbosa.guilherme.backend.requests;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ProductPostRequestBody {
     @NotBlank
     @Size(min = 3, message = "Name must have at least 3 characters")
@@ -14,4 +16,7 @@ public class ProductPostRequestBody {
     @NotNull
     @PositiveOrZero
     private Double price;
+
+    @NotNull
+    private Long categoryId;
 }

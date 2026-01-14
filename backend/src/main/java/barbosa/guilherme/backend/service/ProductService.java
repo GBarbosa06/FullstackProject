@@ -1,6 +1,7 @@
-package barbosa.guilherme.backend.Service;
+package barbosa.guilherme.backend.service;
 
 import barbosa.guilherme.backend.exception.BadRequestException;
+import barbosa.guilherme.backend.model.Category;
 import barbosa.guilherme.backend.model.Product;
 import barbosa.guilherme.backend.repository.ProductRepository;
 import barbosa.guilherme.backend.requests.ProductPostRequestBody;
@@ -13,9 +14,11 @@ import java.util.List;
 @Service
 public class ProductService {
     private final ProductRepository repository;
+    private final CategoryService categoryService;
 
-    public ProductService(ProductRepository repository) {
+    public ProductService(ProductRepository repository, CategoryService categoryService) {
         this.repository = repository;
+        this.categoryService = categoryService;
     }
 
     public List<Product> listAll() {
@@ -33,6 +36,8 @@ public class ProductService {
         newProduct.setName(productPostRequestBody.getName());
         newProduct.setDescription(productPostRequestBody.getDescription());
         newProduct.setPrice(productPostRequestBody.getPrice());
+        Category category = categoryService.findByIdOrThrowBadRequestException(productPostRequestBody.getCategoryId());
+        newProduct.setCategory(category);
         return repository.save(newProduct);
     }
 

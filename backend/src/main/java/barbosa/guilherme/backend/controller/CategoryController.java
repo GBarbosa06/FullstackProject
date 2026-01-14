@@ -1,6 +1,6 @@
 package barbosa.guilherme.backend.controller;
 
-import barbosa.guilherme.backend.Service.CategoryService;
+import barbosa.guilherme.backend.service.CategoryService;
 import barbosa.guilherme.backend.model.Category;
 import barbosa.guilherme.backend.requests.CategoryPostRequestBody;
 import barbosa.guilherme.backend.requests.CategoryPutRequestBody;
