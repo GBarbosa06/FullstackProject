@@ -1,6 +1,7 @@
 package barbosa.guilherme.backend.service;
 
 import barbosa.guilherme.backend.exception.BadRequestException;
+import barbosa.guilherme.backend.model.Role;
 import barbosa.guilherme.backend.model.User;
 import barbosa.guilherme.backend.repository.UserRepository;
 import barbosa.guilherme.backend.requests.UserLoginRequestBody;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Service
@@ -72,6 +74,10 @@ public class UserService {
         user.setName(userPostRequestBody.getName());
         user.setEmail(userPostRequestBody.getEmail());
         user.setPassword(userPostRequestBody.getPassword());
+
+        Role userRole = new Role(1L, "USER");
+
+        user.setRoles(Set.of(userRole));
 
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email cannot be null.");

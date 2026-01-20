@@ -29,7 +29,7 @@ const Home = () => {
             }
         }
 
-        if (isAuthenticated()) {
+        if (isAuthenticated) {
             fetchUsuarios();
         }
     }, [token, isAuthenticated]);

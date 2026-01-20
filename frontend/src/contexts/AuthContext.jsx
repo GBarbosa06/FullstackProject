@@ -3,7 +3,6 @@ import useAuthentication from '../hooks/useAuthentication';
 
 const AuthContext = createContext();
 
-// Hook personalizado para usar o contexto de autenticação
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

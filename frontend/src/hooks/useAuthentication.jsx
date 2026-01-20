@@ -13,14 +13,6 @@ const useAuthentication = () => {
         return () => setCancelled(true);
     },[]);
 
-    useEffect(() => {
-        // Verificar se há token no localStorage ao carregar
-        const savedToken = localStorage.getItem('token');
-        if (savedToken) {
-            setToken(savedToken);
-        }
-    }, []);
-
     const checkIfIsCancelled = () => {
         if (cancelled) {
             return;
@@ -154,9 +146,7 @@ const useAuthentication = () => {
         setError(null);
     }
 
-    const isAuthenticated = () => {
-        return !!token;
-    }
+    const isAuthenticated = !!token;
 
     return {
         register,

@@ -1,7 +1,7 @@
 
 
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 
@@ -17,7 +17,7 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate()
-  const { login, loading } = useAuthentication();
+  const { login, loading, token } = useAuthentication();
 
   const validateForm = () => {
     const newErrors = {};
@@ -45,21 +45,12 @@ const Login = () => {
     
     setIsSubmitting(true);
 
-    const credentials = {
-      email,
-      password
-    };
-
-    try {
-      const result = await login(credentials);
-      if (result && result.token) {
-        navigate('/');
-      }
-    } catch (err) {
-      setErrors({ general: err.message || 'Erro ao fazer login' });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await login({email, password})
+    navigate('/');
+  }
+  const adminLogin = () =>{
+    setEmail('admin@admin.com');
+    setPassword('senhamuitoforte');
   }
 
   return (
@@ -144,6 +135,11 @@ const Login = () => {
             <Link to="/register" className='nav-link font-semibold'>
               Criar conta
             </Link>
+          </p>
+          <p className='mt-4 text-[#696969] text-sm animate-pulse cursor-pointer' onClick={adminLogin}>
+            Conta admin: <br />
+            admin@admin.com <br />
+            senhamuitoforte
           </p>
         </div>
       </div>
