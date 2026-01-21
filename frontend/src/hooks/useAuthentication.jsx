@@ -8,10 +8,21 @@ const useAuthentication = () => {
     const [cancelled, setCancelled] = useState(false);
     const [token, setToken] = useState(localStorage.getItem('token') || null);
     const [user, setUser] = useState(null);
+    const [authReady, setAuthReady] = useState(false);
+
 
     useEffect(() => {
         return () => setCancelled(true);
     },[]);
+
+    useEffect(() => {
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+        setToken(savedToken);
+    }
+    setAuthReady(true);
+    }, []);
+
 
     const checkIfIsCancelled = () => {
         if (cancelled) {
@@ -156,7 +167,8 @@ const useAuthentication = () => {
         error,
         token,
         user,
-        isAuthenticated
+        isAuthenticated: !!token,
+        authReady
     }
 }
 

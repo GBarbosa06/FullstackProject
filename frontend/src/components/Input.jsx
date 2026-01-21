@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react'
 
 const Input = ({ 
@@ -8,6 +6,7 @@ const Input = ({
   error = false, 
   success = false,
   icon = null,
+  label = '',
   ...props 
 }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -29,10 +28,16 @@ const Input = ({
         className={getInputClasses()}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        placeholder=" "
         {...props}
       />
+      {label && (
+        <label className="input-label">
+          {label}
+        </label>
+      )}
       {icon && (
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+        <div className="input-icon-wrapper">
           {icon}
         </div>
       )}
@@ -41,3 +46,4 @@ const Input = ({
 }
 
 export default Input
+

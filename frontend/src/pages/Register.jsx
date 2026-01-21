@@ -1,8 +1,6 @@
-
-
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
-import { Eye, EyeOff, User, Mail, Lock, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, User, Mail, Lock, UserPlus, Shield, CheckCircle } from 'lucide-react';
 
 //components
 import Input from '../components/Input';
@@ -21,6 +19,23 @@ const Register = () => {
 
     const { register, loading } = useAuthentication();
     const navigate = useNavigate();
+
+    // Password validation states
+    const [passwordChecks, setPasswordChecks] = useState({
+        hasLowercase: false,
+        hasUppercase: false,
+        hasNumber: false,
+        hasMinLength: false
+    });
+
+    useEffect(() => {
+        setPasswordChecks({
+            hasLowercase: /[a-z]/.test(password),
+            hasUppercase: /[A-Z]/.test(password),
+            hasNumber: /\d/.test(password),
+            hasMinLength: password.length >= 6
+        });
+    }, [password]);
 
     const validateForm = () => {
         const newErrors = {};
@@ -42,7 +57,7 @@ const Register = () => {
         } else if (password.length < 6) {
             newErrors.password = 'Senha deve ter pelo menos 6 caracteres';
         } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-            newErrors.password = 'Senha deve conter pelo menos: 1 letra minúscula, 1 letra maiúscula e 1 número';
+            newErrors.password = 'Senha deve conter: 1 minúscula, 1 maiúscula e 1 número';
         }
         
         if (!confirmPassword) {
@@ -85,134 +100,186 @@ const Register = () => {
     }
 
     return (
-        <div className='min-h-screen flex items-center justify-center px-4 py-8'>
-            <div className='form-container w-full max-w-md'>
-                <div className='text-center mb-8'>
-                    <h1 className='form-title flex items-center justify-center gap-3'>
-                        <UserPlus className="w-8 h-8" />
-                        Criar Conta
-                    </h1>
-                    <p className='form-subtitle'>
-                        Crie sua conta para começar a usar
-                    </p>
-                </div>
-                
-                <form onSubmit={handleSubmit} className='space-y-6'>
-                    {errors.general && (
-                        <div className="message message-error">
-                            {errors.general}
+        <div className="auth-page">
+            {/* Floating Shapes Background */}
+            <div className="floating-shapes">
+                <div className="shape shape-1"></div>
+                <div className="shape shape-2"></div>
+                <div className="shape shape-3"></div>
+            </div>
+
+            <div className='min-h-screen flex items-center justify-center px-4 py-8'>
+                <div className='form-container w-full max-w-md'>
+                    {/* Header */}
+                    <div className='text-center mb-8'>
+                        <div className='form-title flex items-center justify-center gap-3'>
+                            <div className="icon-wrapper">
+                                <UserPlus className="w-6 h-6" />
+                            </div>
+                            <span>Criar Conta</span>
                         </div>
-                    )}
+                        <p className='form-subtitle'>
+                            Crie sua conta para começar a usar
+                        </p>
+                    </div>
                     
-                    {successMessage && (
-                        <div className="message message-success">
-                            {successMessage}
+                    <form onSubmit={handleSubmit} className='space-y-5'>
+                        {errors.general && (
+                            <div className="message message-error">
+                                <span className="message-icon">⚠</span>
+                                {errors.general}
+                            </div>
+                        )}
+                        
+                        {successMessage && (
+                            <div className="message message-success">
+                                <span className="message-icon">✓</span>
+                                {successMessage}
+                            </div>
+                        )}
+                        
+                        <div>
+                            <Input 
+                                type="text" 
+                                name="name"
+                                label="Nome Completo"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                error={!!errors.name}
+                                icon={<User className="w-5 h-5" />}
+                                required 
+                            />
+                            {errors.name && (
+                                <p className="text-red-400 text-sm mt-2 ml-1">{errors.name}</p>
+                            )}
                         </div>
-                    )}
+                        
+                        <div>
+                            <Input 
+                                type="email" 
+                                name="email"
+                                label="Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                error={!!errors.email}
+                                icon={<Mail className="w-5 h-5" />}
+                                required 
+                            />
+                            {errors.email && (
+                                <p className="text-red-400 text-sm mt-2 ml-1">{errors.email}</p>
+                            )}
+                        </div>
+                        
+                        <div>
+                            <Input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                label="Senha"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                error={!!errors.password}
+                                icon={
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="password-toggle"
+                                        aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                                    >
+                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                }
+                                required 
+                            />
+                            {errors.password && (
+                                <p className="text-red-400 text-sm mt-2 ml-1">{errors.password}</p>
+                            )}
+                            
+                            {/* Password Strength Hint */}
+                            {password && (
+                                <div className="password-hint">
+                                    <p className="password-hint-title">A senha deve conter:</p>
+                                    <ul>
+                                        <li className={passwordChecks.hasMinLength ? 'valid' : ''}>
+                                            Mínimo 6 caracteres
+                                        </li>
+                                        <li className={passwordChecks.hasLowercase ? 'valid' : ''}>
+                                            Uma letra minúscula
+                                        </li>
+                                        <li className={passwordChecks.hasUppercase ? 'valid' : ''}>
+                                            Uma letra maiúscula
+                                        </li>
+                                        <li className={passwordChecks.hasNumber ? 'valid' : ''}>
+                                            Um número
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div>
+                            <Input
+                                type={showConfirmPassword ? "text" : "password"}
+                                name="confirmPassword"
+                                label="Confirmar Senha"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                error={!!errors.confirmPassword}
+                                icon={
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="password-toggle"
+                                        aria-label={showConfirmPassword ? "Ocultar senha" : "Mostrar senha"}
+                                    >
+                                        {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                }
+                                required 
+                            />
+                            {errors.confirmPassword && (
+                                <p className="text-red-400 text-sm mt-2 ml-1">{errors.confirmPassword}</p>
+                            )}
+                            {confirmPassword && !errors.confirmPassword && password === confirmPassword && (
+                                <p className="text-green-400 text-sm mt-2 ml-1" style={{ color: 'var(--success-color)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <CheckCircle className="w-4 h-4" />
+                                    Senhas coincidem
+                                </p>
+                            )}
+                        </div>
+                        
+                        <button 
+                            type="submit" 
+                            className={`btn w-full btn-ripple ${loading || isSubmitting ? 'loading' : ''}`}
+                            disabled={loading || isSubmitting}
+                        >
+                            {(loading || isSubmitting) ? (
+                                <>
+                                    <div className="spinner"></div>
+                                    Criando conta...
+                                </>
+                            ) : (
+                                <>
+                                    <UserPlus className="w-5 h-5" />
+                                    Criar conta
+                                </>
+                            )}
+                        </button>
+                    </form>
                     
-                    <div>
-                        <Input 
-                            type="text" 
-                            name="name"
-                            placeholder="Seu nome completo"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            error={!!errors.name}
-                            icon={<User className="w-5 h-5" />}
-                            required 
-                        />
-                        {errors.name && (
-                            <p className="text-red-400 text-sm mt-2">{errors.name}</p>
-                        )}
+                    {/* Divider */}
+                    <div className='divider'>
+                        <span>ou</span>
                     </div>
                     
-                    <div>
-                        <Input 
-                            type="email" 
-                            name="email"
-                            placeholder="seu@email.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            error={!!errors.email}
-                            icon={<Mail className="w-5 h-5" />}
-                            required 
-                        />
-                        {errors.email && (
-                            <p className="text-red-400 text-sm mt-2">{errors.email}</p>
-                        )}
+                    {/* Login Link */}
+                    <div className='mt-8 text-center'>
+                        <p className='text-sm' style={{ color: 'var(--text-secondary)' }}>
+                            Já tem uma conta?{' '}
+                            <Link to="/login" className='nav-link font-semibold'>
+                                Fazer login
+                            </Link>
+                        </p>
                     </div>
-                    
-                    <div>
-                        <Input
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder="Sua senha"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            error={!!errors.password}
-                            icon={
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="password-toggle"
-                                >
-                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                </button>
-                            }
-                            required 
-                        />
-                        {errors.password && (
-                            <p className="text-red-400 text-sm mt-2">{errors.password}</p>
-                        )}
-                    </div>
-                    
-                    <div>
-                        <Input
-                            type={showConfirmPassword ? "text" : "password"}
-                            name="confirmPassword"
-                            placeholder="Confirme sua senha"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            error={!!errors.confirmPassword}
-                            icon={
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                    className="password-toggle"
-                                >
-                                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                </button>
-                            }
-                            required 
-                        />
-                        {errors.confirmPassword && (
-                            <p className="text-red-400 text-sm mt-2">{errors.confirmPassword}</p>
-                        )}
-                    </div>
-                    
-                    <button 
-                        type="submit" 
-                        className={`btn w-full ${loading || isSubmitting ? 'loading' : ''}`}
-                        disabled={loading || isSubmitting}
-                    >
-                        {(loading || isSubmitting) ? (
-                            <>
-                                <div className="spinner"></div>
-                                Criando conta...
-                            </>
-                        ) : (
-                            'Criar conta'
-                        )}
-                    </button>
-                </form>
-                
-                <div className='mt-8 text-center'>
-                    <p className='text-sm text-[#696969]'>
-                        Já tem uma conta?{' '}
-                        <Link to="/login" className='nav-link font-semibold'>
-                            Fazer login
-                        </Link>
-                    </p>
                 </div>
             </div>
         </div>
@@ -220,3 +287,4 @@ const Register = () => {
 }
 
 export default Register
+

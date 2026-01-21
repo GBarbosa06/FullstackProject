@@ -11,14 +11,12 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="bg-[#1e1e2f] min-h-screen text-white">
+    <div className="min-h-screen">
       <BrowserRouter>
         <AuthProvider>
           <Routes>
             <Route path="/" element={
-              <ProtectedRoute>
                 <Home />
-              </ProtectedRoute>
             } />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

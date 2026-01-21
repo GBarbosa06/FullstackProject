@@ -3,16 +3,19 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, authReady, loading } = useAuth();
 
-  if (loading) {
+  // Aguarda carregamento inicial e também loading de login
+  if (!authReady || loading) {
     return  <>
                 <div className="spinner"></div>
                 Carregando...
               </>;
   }
 
-  if (!isAuthenticated) {
+  // Verifica também diretamente o localStorage para evitar race condition
+  const tokenFromStorage = localStorage.getItem('token');
+  if (!isAuthenticated && !tokenFromStorage) {
     return <Navigate to="/login" replace />;
   }
 
@@ -20,3 +23,4 @@ const ProtectedRoute = ({ children }) => {
 };
 
 export default ProtectedRoute;
+
