@@ -1,36 +1,115 @@
 import React, { useState, useEffect } from 'react';
-import { Users as UsersIcon, UserPlus, Trash2, X, Shield } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Tag } from 'lucide-react';
 import Navbar from '../components/Navbar';
-import { userService } from '../services/api';
+import Input from '../components/Input';
+import { categoryService } from '../services/api';
 
-const Users = () => {
-    const [users, setUsers] = useState([]);
+const Categories = () => {
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [editingCategory, setEditingCategory] = useState(null);
+    const [formData, setFormData] = useState({ name: '', slug: '' });
+    const [errors, setErrors] = useState({});
     const [deleteConfirm, setDeleteConfirm] = useState(null);
 
     useEffect(() => {
-        loadUsers();
+        loadCategories();
     }, []);
 
-    const loadUsers = async () => {
+    const loadCategories = async () => {
         try {
             setLoading(true);
-            const data = await userService.getAll();
-            setUsers(data);
+            const data = await categoryService.getAll();
+            setCategories(data);
         } catch (error) {
-            console.error('Erro ao carregar usuários:', error);
+            console.error('Erro ao carregar categorias:', error);
         } finally {
             setLoading(false);
         }
     };
 
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório';
+        else if (formData.name.length < 2) newErrors.name = 'Nome deve ter pelo menos 2 caracteres';
+        
+        if (!editingCategory && !formData.slug.trim()) {
+            newErrors.slug = 'Slug é obrigatório';
+        }
+        
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const generateSlug = (name) => {
+        return name
+            .toLowerCase()
+            .replace(/[áàâã]/g, 'a')
+            .replace(/[éèê]/g, 'e')
+            .replace(/[íìî]/g, 'i')
+            .replace(/[óòôõ]/g, 'o')
+            .replace(/[úùû]/g, 'u')
+            .replace(/[ç]/g, 'c')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+
+        try {
+            if (editingCategory) {
+                await categoryService.update({
+                    id: editingCategory.id,
+                    name: formData.name,
+                    slug: formData.slug
+                });
+            } else {
+                await categoryService.create(formData);
+            }
+            loadCategories();
+            closeModal();
+        } catch (error) {
+            setErrors({ general: error.message });
+        }
+    };
+
     const handleDelete = async (id) => {
         try {
-            await userService.delete(id);
-            loadUsers();
+            await categoryService.delete(id);
+            loadCategories();
             setDeleteConfirm(null);
         } catch (error) {
-            console.error('Erro ao excluir usuário:', error);
+            setErrors({ general: error.message });
+        }
+    };
+
+    const openModal = (category = null) => {
+        if (category) {
+            setEditingCategory(category);
+            setFormData({ name: category.name, slug: category.slug });
+        } else {
+            setEditingCategory(null);
+            setFormData({ name: '', slug: '' });
+        }
+        setErrors({});
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setEditingCategory(null);
+        setFormData({ name: '', slug: '' });
+        setErrors({});
+    };
+
+    const handleNameChange = (e) => {
+        const name = e.target.value;
+        setFormData({ ...formData, name });
+        if (!editingCategory) {
+            setFormData(prev => ({ ...prev, slug: generateSlug(name) }));
         }
     };
 
@@ -41,21 +120,29 @@ const Users = () => {
             <div className="page-content">
                 <div className="page-header">
                     <div>
-                        <h1 className="page-title">Usuários</h1>
-                        <p className="page-subtitle">Gerencie os usuários do sistema</p>
+                        <h1 className="page-title">Categorias</h1>
+                        <p className="page-subtitle">Gerencie as categorias dos seus produtos</p>
                     </div>
+                    <button className="btn" onClick={() => openModal()}>
+                        <Plus className="w-5 h-5" />
+                        Nova Categoria
+                    </button>
                 </div>
 
                 {loading ? (
                     <div className="loading-container">
                         <div className="spinner"></div>
-                        <p>Carregando usuários...</p>
+                        <p>Carregando categorias...</p>
                     </div>
-                ) : users.length === 0 ? (
+                ) : categories.length === 0 ? (
                     <div className="empty-state">
-                        <UsersIcon className="w-16 h-16" />
-                        <h3>Nenhum usuário encontrado</h3>
-                        <p>Não há usuários cadastrados no sistema</p>
+                        <Tag className="w-16 h-16" />
+                        <h3>Nenhuma categoria encontrada</h3>
+                        <p>Comece criando sua primeira categoria</p>
+                        <button className="btn" onClick={() => openModal()}>
+                            <Plus className="w-5 h-5" />
+                            Criar Categoria
+                        </button>
                     </div>
                 ) : (
                     <div className="table-container">
@@ -64,35 +151,33 @@ const Users = () => {
                                 <tr>
                                     <th>ID</th>
                                     <th>Nome</th>
-                                    <th>Email</th>
-                                    <th>Função</th>
+                                    <th>Slug</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map((user) => (
-                                    <tr key={user.id}>
-                                        <td>#{user.id}</td>
+                                {categories.map((category) => (
+                                    <tr key={category.id}>
+                                        <td>#{category.id}</td>
                                         <td>
-                                            <div className="user-name">
-                                                <div className="user-avatar">
-                                                    {user.name?.charAt(0).toUpperCase()}
-                                                </div>
-                                                {user.name}
+                                            <div className="category-name">
+                                                <Tag className="w-4 h-4" />
+                                                {category.name}
                                             </div>
                                         </td>
-                                        <td>{user.email}</td>
-                                        <td>
-                                            <span className="role-badge">
-                                                <Shield className="w-3 h-3" />
-                                                Usuário
-                                            </span>
-                                        </td>
+                                        <td><code>{category.slug}</code></td>
                                         <td>
                                             <div className="action-buttons">
                                                 <button 
+                                                    className="action-btn edit" 
+                                                    onClick={() => openModal(category)}
+                                                    title="Editar"
+                                                >
+                                                    <Edit2 className="w-4 h-4" />
+                                                </button>
+                                                <button 
                                                     className="action-btn delete" 
-                                                    onClick={() => setDeleteConfirm(user.id)}
+                                                    onClick={() => setDeleteConfirm(category.id)}
                                                     title="Excluir"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
@@ -107,6 +192,56 @@ const Users = () => {
                 )}
             </div>
 
+            {/* Modal */}
+            {showModal && (
+                <div className="modal-overlay" onClick={closeModal}>
+                    <div className="modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>{editingCategory ? 'Editar Categoria' : 'Nova Categoria'}</h2>
+                            <button className="modal-close" onClick={closeModal}>
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        
+                        <form onSubmit={handleSubmit} className="modal-body">
+                            {errors.general && (
+                                <div className="message message-error">{errors.general}</div>
+                            )}
+                            
+                            <Input
+                                type="text"
+                                label="Nome"
+                                value={formData.name}
+                                onChange={handleNameChange}
+                                error={!!errors.name}
+                                icon={<Tag className="w-5 h-5" />}
+                                required
+                            />
+                            {errors.name && <p className="error-text">{errors.name}</p>}
+                            
+                            <Input
+                                type="text"
+                                label="Slug"
+                                value={formData.slug}
+                                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                error={!!errors.slug}
+                                required
+                            />
+                            {errors.slug && <p className="error-text">{errors.slug}</p>}
+                            
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                                    Cancelar
+                                </button>
+                                <button type="submit" className="btn">
+                                    {editingCategory ? 'Salvar' : 'Criar'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             {/* Delete Confirmation Modal */}
             {deleteConfirm && (
                 <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
@@ -118,7 +253,7 @@ const Users = () => {
                             </button>
                         </div>
                         <div className="modal-body">
-                            <p>Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.</p>
+                            <p>Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita.</p>
                             <div className="modal-footer">
                                 <button className="btn btn-secondary" onClick={() => setDeleteConfirm(null)}>
                                     Cancelar
@@ -196,6 +331,10 @@ const Users = () => {
                     color: var(--text-primary);
                 }
 
+                .empty-state p {
+                    margin-bottom: 8px;
+                }
+
                 .table-container {
                     background: white;
                     border-radius: 16px;
@@ -234,36 +373,23 @@ const Users = () => {
                     background: #f8fafc;
                 }
 
-                .user-name {
+                .category-name {
                     display: flex;
                     align-items: center;
-                    gap: 12px;
+                    gap: 10px;
                     font-weight: 500;
                 }
 
-                .user-avatar {
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 10px;
-                    background: linear-gradient(135deg, var(--primary-color), #6366f1);
-                    color: white;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-weight: 600;
-                    font-size: 0.9rem;
+                .category-name svg {
+                    color: var(--primary-color);
                 }
 
-                .role-badge {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    background: rgba(16, 185, 129, 0.1);
-                    color: var(--success-color);
+                code {
+                    background: #f1f5f9;
+                    padding: 4px 10px;
+                    border-radius: 6px;
+                    font-size: 0.85rem;
+                    color: var(--text-secondary);
                 }
 
                 .action-buttons {
@@ -282,6 +408,15 @@ const Users = () => {
                     justify-content: center;
                 }
 
+                .action-btn.edit {
+                    background: rgba(79, 70, 229, 0.1);
+                    color: var(--primary-color);
+                }
+
+                .action-btn.edit:hover {
+                    background: rgba(79, 70, 229, 0.2);
+                }
+
                 .action-btn.delete {
                     background: rgba(239, 68, 68, 0.1);
                     color: var(--error-color);
@@ -291,6 +426,15 @@ const Users = () => {
                     background: rgba(239, 68, 68, 0.2);
                 }
 
+                .error-text {
+                    color: var(--error-color);
+                    font-size: 0.8rem;
+                    margin-top: -16px;
+                    margin-bottom: 16px;
+                    margin-left: 4px;
+                }
+
+                /* Modal Styles */
                 .modal-overlay {
                     position: fixed;
                     top: 0;
@@ -380,6 +524,10 @@ const Users = () => {
                         gap: 16px;
                     }
 
+                    .page-header .btn {
+                        width: 100%;
+                    }
+
                     .table-container {
                         overflow-x: auto;
                     }
@@ -393,5 +541,5 @@ const Users = () => {
     );
 };
 
-export default Users;
+export default Categories;
 
