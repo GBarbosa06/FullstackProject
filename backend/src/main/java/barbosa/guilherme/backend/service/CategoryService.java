@@ -37,6 +37,7 @@ public class CategoryService {
 
     public void delete(long id){repository.delete(findByIdOrThrowBadRequestException(id));}
 
+    @Transactional
     public void update(CategoryPutRequestBody categoryPutRequestBody){
         Category updatedCategory = findByIdOrThrowBadRequestException(categoryPutRequestBody.getId());
 

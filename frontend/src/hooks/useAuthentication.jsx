@@ -8,29 +8,32 @@ const useAuthentication = () => {
     const [cancelled, setCancelled] = useState(false);
     const [token, setToken] = useState(localStorage.getItem('token') || null);
     const [user, setUser] = useState(null);
-    const [authReady, setAuthReady] = useState(false);
-
 
     useEffect(() => {
         return () => setCancelled(true);
-    },[]);
-
-    useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    if (savedToken) {
-        setToken(savedToken);
-    }
-    setAuthReady(true);
     }, []);
 
+    useEffect(() => {
+        const savedToken = localStorage.getItem('token');
+        if (savedToken) {
+            setToken(savedToken);
+            // Optionally decode token to get user info
+            try {
+                const base64Url = savedToken.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const payload = JSON.parse(window.atob(base64));
+                setUser({ email: payload.sub });
+            } catch (e) {
+                console.error('Error decoding token:', e);
+            }
+        }
+    }, []);
 
     const checkIfIsCancelled = () => {
         if (cancelled) {
             return;
         }
     }
-
-
 
     const register = async (data) => {
         checkIfIsCancelled();
@@ -88,8 +91,6 @@ const useAuthentication = () => {
             setLoading(false);
         }
     }
-
-
 
     const login = async (credentials) => {
         checkIfIsCancelled();
@@ -167,8 +168,7 @@ const useAuthentication = () => {
         error,
         token,
         user,
-        isAuthenticated: !!token,
-        authReady
+        isAuthenticated,
     }
 }
 

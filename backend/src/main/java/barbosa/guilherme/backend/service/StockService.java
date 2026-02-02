@@ -34,13 +34,14 @@ public class StockService {
     }
 
     public void deleteById(long id){
-        repository.deleteById(findByIdOrThrowBadRequestException(id).getId());
+        repository.deleteById(id);
     }
 
+    @Transactional
     public void update(StockPutRequestBody stockPutRequestBody){
         Stock stockToUpdate = findByIdOrThrowBadRequestException(stockPutRequestBody.getId());
 
-        if(stockPutRequestBody.getQuantity() >= 0) {
+        if(stockPutRequestBody.getQuantity() != null && stockPutRequestBody.getQuantity() >= 0) {
             stockToUpdate.setQuantity(stockPutRequestBody.getQuantity());
         }
         if(stockPutRequestBody.getProduct() != null) {

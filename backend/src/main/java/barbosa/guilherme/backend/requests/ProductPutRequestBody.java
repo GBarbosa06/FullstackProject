@@ -20,4 +20,6 @@ public class ProductPutRequestBody {
     @NotNull
     @PositiveOrZero
     private Double price;
+
+    private Long categoryId;
 }

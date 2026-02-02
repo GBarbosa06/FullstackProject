@@ -1,5 +1,5 @@
 // API Service para chamadas HTTP com JWT token
-const API_BASE = 'http://localhost:8080';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 // Função auxiliar para obter headers com token
 const getAuthHeaders = () => {
@@ -12,6 +12,11 @@ const getAuthHeaders = () => {
 
 // Função para tratar erros
 const handleResponse = async (response) => {
+    // Tratamento especial para respostas 204 No Content
+    if (response.status === 204) {
+        return null;
+    }
+    
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
@@ -56,7 +61,7 @@ export const categoryService = {
     },
 
     delete: async (id) => {
-        const response = await fetch(`${API_BASE}/categories?id=${id}`, {
+        const response = await fetch(`${API_BASE}/categories/delete/${id}`, {
             method: 'DELETE',
             headers: getAuthHeaders()
         });

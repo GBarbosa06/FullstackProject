@@ -29,6 +29,9 @@ public class SecurityConfig {
                         //To register/login
                         .requestMatchers("/users/register", "/users/login").permitAll()
 
+                        //List users requires admin (authenticated)
+                        .requestMatchers(HttpMethod.GET, "/users").authenticated()
+
                         //To some GET requests
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()

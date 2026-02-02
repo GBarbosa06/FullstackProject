@@ -71,10 +71,6 @@ const Home = () => {
               <span className="stat-value">{stats.totalProducts}</span>
               <span className="stat-label">Total de Produtos</span>
             </div>
-            <div className="stat-trend up">
-              <ArrowUp className="w-4 h-4" />
-              <span>12%</span>
-            </div>
           </div>
 
           <div className="stat-card">
@@ -120,9 +116,6 @@ const Home = () => {
               <h4>Atenção: Estoque Baixo</h4>
               <p>Você tem {stats.lowStock} produto(s) com estoque baixo ou esgotado.</p>
             </div>
-            <button className="btn btn-secondary">
-              Verificar
-            </button>
           </div>
         )}
 

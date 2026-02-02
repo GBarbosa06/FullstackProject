@@ -11,10 +11,10 @@ public class StockPutRequestBody {
     @NotNull(message = "The id field cannot be null")
     private long id;
 
-    @NotBlank
+    @NotNull(message = "Product is required")
     private Product product;
 
-    @NotNull
-    @PositiveOrZero
+    @NotNull(message = "Quantity is required")
+    @PositiveOrZero(message = "Quantity must be positive or zero")
     private Integer quantity;
 }

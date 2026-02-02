@@ -28,8 +28,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Ignore JWT validation for register and login
-        if (path.contains("/users/register") || path.contains("/users/login")) {
+        // Skip JWT validation for authentication endpoints
+        if (path.startsWith("/users/register") || path.startsWith("/users/login")) {
             chain.doFilter(request, response);
             return;
         }

@@ -50,6 +50,7 @@ public class UserService {
         repository.delete(findByIdOrThrowBadRequestException(id));
     }
 
+    @Transactional
     public void update(UserPutRequestBody userPutRequestBody) {
         User savedUser = findByIdOrThrowBadRequestException(userPutRequestBody.getId());
 
@@ -76,45 +77,37 @@ public class UserService {
         user.setPassword(userPostRequestBody.getPassword());
 
         Role userRole = new Role(1L, "USER");
-
         user.setRoles(Set.of(userRole));
 
+        // Validate email
         if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new IllegalArgumentException("Email cannot be null.");
+            throw new BadRequestException("Email cannot be null or empty");
         }
 
+        // Validate password
         if (user.getPassword() == null || user.getPassword().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be null or empty");
+            throw new BadRequestException("Password cannot be null or empty");
         }
 
+        // Check if email already exists
         Optional<User> existingUser = repository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
             throw new BadRequestException("Email already used");
         }
 
+        // Validate password strength
         Pattern passwordPattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
         if (!passwordPattern.matcher(user.getPassword()).matches()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit"
-            );
+            throw new BadRequestException("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit");
         }
 
-        // encode
+        // Encode password and save user
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // save
         repository.save(user);
 
-        // generate token
+        // Generate and return token directly
         String token = jwtUtil.generateToken(user.getEmail());
-
-        UserLoginRequestBody loginBody = new UserLoginRequestBody();
-        loginBody.setEmail(userPostRequestBody.getEmail());
-        loginBody.setPassword(userPostRequestBody.getPassword());
-
-        // return token
-        return login(loginBody);
+        return new TokenResponse(token);
     }
 
 

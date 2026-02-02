@@ -45,17 +45,22 @@ public class ProductService {
         repository.delete(findByIdOrThrowBadRequestException(id));
     }
 
+    @Transactional
     public void update(ProductPutRequestBody productPutRequestBody){
         Product savedProduct = findByIdOrThrowBadRequestException(productPutRequestBody.getId());
 
         if (productPutRequestBody.getName() != null && !productPutRequestBody.getName().isBlank()) {
             savedProduct.setName(productPutRequestBody.getName());
         }
-        if (productPutRequestBody.getDescription() != null && !productPutRequestBody.getDescription().isBlank()) {
+        if (productPutRequestBody.getDescription() != null) {
             savedProduct.setDescription(productPutRequestBody.getDescription());
         }
-        if(productPutRequestBody.getPrice() >= 0){
+        if(productPutRequestBody.getPrice() != null && productPutRequestBody.getPrice() >= 0){
             savedProduct.setPrice(productPutRequestBody.getPrice());
+        }
+        if(productPutRequestBody.getCategoryId() != null){
+            Category category = categoryService.findByIdOrThrowBadRequestException(productPutRequestBody.getCategoryId());
+            savedProduct.setCategory(category);
         }
 
         repository.save(savedProduct);

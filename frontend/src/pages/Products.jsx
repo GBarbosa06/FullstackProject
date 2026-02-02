@@ -36,6 +36,7 @@ const Products = () => {
             setCategories(categoriesData);
         } catch (error) {
             console.error('Erro ao carregar dados:', error);
+            alert('Erro ao carregar dados: ' + error.message);
         } finally {
             setLoading(false);
             setCategoriesLoading(false);
@@ -71,7 +72,10 @@ const Products = () => {
             if (editingProduct) {
                 await productService.update({
                     id: editingProduct.id,
-                    ...productData
+                    name: formData.name,
+                    description: formData.description,
+                    price: parseFloat(formData.price),
+                    categoryId: parseInt(formData.categoryId)
                 });
             } else {
                 await productService.create(productData);
@@ -86,10 +90,12 @@ const Products = () => {
     const handleDelete = async (id) => {
         try {
             await productService.delete(id);
-            loadData();
+            // Recarregar dados e fechar modal
+            await loadData();
             setDeleteConfirm(null);
         } catch (error) {
-            setErrors({ general: error.message });
+            console.error('Erro ao excluir:', error);
+            setErrors({ general: 'Erro ao excluir produto: ' + error.message });
         }
     };
 
